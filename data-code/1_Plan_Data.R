@@ -85,5 +85,13 @@ for (y in 2008:2015) {
   full.ma.data <- rbind(full.ma.data,read_rds(paste0("data/output/ma_data_",y,".rds")))
 }
 
-write_rds(full.ma.data,"full_ma_data.rds")
+write_rds(full.ma.data,"data/output/full_ma_data.rds")
 sapply(paste0("ma_data_", 2007:2015, ".rds"), unlink)
+
+
+
+
+
+
+
+
