@@ -1,0 +1,23 @@
+---
+title: Homework1
+author: AmmarahAhmed
+output: pdf_document
+---
+
+#Enrollment Data
+
+```{r}
+
+```
+1. There are 19,126,783 observations in the dataset. 
+2. There are 26 different plans in the dataset.
+3. I was unable to display the table as the code wouldn't run
+
+```{r}
+ggplot(data = final.data, aes(x=year, y=avg_enrollment)) +
+  geom_line() + ggtitle("Average Enrollees in Medicare Advantage") +
+  labs(x="Year", y="Average Enrollment")
+```
+
+#Premium Data
+I was unable to figure out how to display the graphs from r script in the r markdown
