@@ -24,3 +24,14 @@ ggplot(data = final.data, aes(x=year, y=avg_enrollment)) +
 #Premium data
 plan.premiums<- readRDS("data/output/plan_premiums.rds")
 
+#6
+ggplot(data = final.data, aes(x=year, y=premium, group=0)) +
+  geom_line() + ggtitle("Average Premium over Time") +
+  labs(x="Year", y="Average Premium")
+
+#7
+
+ggplot(data = final.data, aes(x=year, y=premium)) +
+  geom_line() + ggtitle("$0 Premium over Time") +
+  labs(x="Year", y="$0 Premium")
+
