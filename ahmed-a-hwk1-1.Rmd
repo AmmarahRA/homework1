@@ -14,9 +14,7 @@ output: pdf_document
 3. I was unable to display the table as the code wouldn't run
 
 ```{r}
-ggplot(data = final.data, aes(x=year, y=avg_enrollment)) +
-  geom_line() + ggtitle("Average Enrollees in Medicare Advantage") +
-  labs(x="Year", y="Average Enrollment")
+
 ```
 
 #Premium Data
