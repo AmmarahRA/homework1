@@ -41,39 +41,8 @@ final.data <- final.data %>%
 
 final.data <- final.data %>%
   left_join( plan.premiums,
-             by=c("contractid","planid","state_name"="state","county","year")) %>%
-  left_join( risk.rebate.final %>%
-               select(-contract_name, -plan_type),
-             by=c("contractid","planid","year")) %>%
-  left_join( benchmark.final,
-             by=c("ssa","year"))
+             by=c("contractid","planid","state_name"="state","county","year")) 
 
-## final premium and bid variables
-final.data <- final.data %>%
-  mutate(basic_premium=
-           case_when(
-             rebate_partc>0 ~ 0,
-             partd == "No" & !is.na(premium) & is.na(premium_partc) ~ premium,
-             TRUE ~ premium_partc
-           ),
-         bid=
-           case_when(
-             rebate_partc == 0 & basic_premium > 0 ~ (payment_partc + basic_premium)/riskscore_partc,
-             rebate_partc > 0 | basic_premium == 0 ~ payment_partc/riskscore_partc,
-             TRUE ~ NA_real_
-           ))
-
-## incorporate ffs cost data by ssa
-final.data <- final.data %>%
-  left_join( ffs.costs.final %>%
-               select(-state), 
-             by=c("ssa","year")) %>%
-  mutate(avg_ffscost = case_when(
-    parta_enroll==0 & partb_enroll==0 ~ 0,
-    parta_enroll==0 & partb_enroll>0 ~ partb_reimb/partb_enroll,
-    parta_enroll>0 & partb_enroll==0 ~ parta_reimb/parta_enroll,
-    parta_enroll>0 & partb_enroll>0 ~ (parta_reimb/parta_enroll) + (partb_reimb/partb_enroll),
-    TRUE ~ NA_real_
-  ))
+final.data <- final.data %>% drop_na(avg_enrollment)
 
 write_rds(final.data,"data/output/final_ma_data.rds")
