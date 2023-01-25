@@ -6,32 +6,63 @@ full.ma.data<- readRDS("data/output/full_ma_data.rds")
 #2
 unique(full.ma.data$plan_type)
 #3
-knitr::kable(full.ma.data, col.names=c("2010","2011","2012","2013","2014","2015"),
-             type="html", caption = "Plan Count by Year", booktabs = TRUE)
+#knitr::kable(full.ma.data, col.names=c("2010","2011","2012","2013","2014","2015"),
+             #type="html", caption = "Plan Count by Year", booktabs = TRUE)
+
+full.ma.data %>% 
+  group_by(year, plan_type)%>% 
+  summarize(n_under_plan_type = n())%>% 
+  spread(year, n_under_plan_type)
+
 #4
 full.ma.data2<- full.ma.data %>% 
-  filter(snp=='Yes'& eghp=='Yes' & (planid < 800 | planid >= 900))
+  filter(snp == 'No' & eghp == 'No' & !(planid %in% 800:899))
 
-knitr::kable(full.ma.data2, col.names=c("2010","2011","2012","2013","2014","2015"),
-             type="html", caption = "Plan Count by Year", booktabs = TRUE)
+full.ma.data2 %>% 
+  group_by(year, plan_type)%>% 
+  summarize(n_under_plan_type = n())%>% 
+  spread(year, n_under_plan_type)
+
 #5
-final.data <- readRDS("data/output/final_ma_data.rds")
+contract.service.area <- readRDS("data/output/contract_service_area.rds")
 
-ggplot(data = final.data, aes(x=year, y=avg_enrollment)) +
-  geom_line() + ggtitle("Average Enrollees in Medicare Advantage") +
-  labs(x="Year", y="Average Enrollment")
+final.data1 <- full.ma.data %>%
+  inner_join(contract.service.area %>% 
+               select(contractid, fips, year), 
+             by=c("contractid", "fips", "year")) %>%
+  filter(!state %in% c("VI","PR","MP","GU","AS","") &
+           snp == "No" &
+           (planid < 800 | planid >= 900) &
+           !is.na(planid) & !is.na(fips))
+
+final.data1 %>% 
+  group_by(year,county)%>% 
+  summarize(count = n())%>%
+  ggplot(aes( x = year, y  = count, group = county))+
+  geom_line()+
+  labs( title = 'Number of enrollees per county', x = 'Year', y = 'Number of enrollees')+
+  theme_minimal()
 
 #Premium data
 plan.premiums<- readRDS("data/output/plan_premiums.rds")
+final.data<- readRDS("data/output/final_ma_data.rds")
 
 #6
-ggplot(data = final.data, aes(x=year, y=premium, group=0)) +
-  geom_line() + ggtitle("Average Premium over Time") +
-  labs(x="Year", y="Average Premium")
+final.data %>% 
+  group_by(year)%>% 
+  summarize(prem = mean(!is.na(premium)))%>%
+  ggplot( aes(year, prem))+
+  geom_line(color = 'red')+
+  labs( title = 'Average premium over time', x = 'Year', y = 'Average Premium')+
+  theme_minimal()
 
 #7
 
-ggplot(data = final.data, aes(x=year, y=premium)) +
-  geom_line() + ggtitle("$0 Premium over Time") +
-  labs(x="Year", y="$0 Premium")
-
+final.data %>% 
+  filter(!is.na(premium))%>% 
+  group_by(year)%>% 
+  summarize(perc_0 = (sum(premium == 0)/n() * 100))%>% 
+  ggplot( aes(year, perc_0))+
+  geom_line(color = 'blue')+
+  labs( title = 'Percentage of $0 Premium Plans over time', x = 'Year', y = 'Percentage of $0 Premium Plans')+
+  theme_minimal()
