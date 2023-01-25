@@ -1,21 +1,61 @@
 ---
-title: Homework1
-author: AmmarahAhmed
-output: pdf_document
+title: 'Homework 1 - Research in Health Economics'
+author: "Ammarah Ahmed"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: no
+    toc_depth: '2'
+  prettydoc::html_pretty:
+    df_print: kable
+    highlight: vignette
+    theme: lumen
+  html_document:
+    df_print: paged
 ---
+```{r}
+pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, stringr, readxl, data.table, gdata, readr)
+```
 
 #Enrollment Data
 
 ```{r}
-
+full.ma.data<- readRDS("data/output/full_ma_data.rds")
 ```
 1. There are 19,126,783 observations in the dataset. 
 2. There are 26 different plans in the dataset.
 3. I was unable to display the table as the code wouldn't run
+```{r}
+full.ma.data %>% 
+  group_by(year, plan_type)%>% 
+  summarize(n_under_plan_type = n())%>% 
+  spread(year, n_under_plan_type)
+```
+```{r}
+full.ma.data2<- full.ma.data %>% 
+  filter(snp == 'No' & eghp == 'No' & !(planid %in% 800:899))
+```
+```{r}
+full.ma.data2 %>% 
+  group_by(year, plan_type)%>% 
+  summarize(n_under_plan_type = n())%>% 
+  spread(year, n_under_plan_type)
+```
 
 ```{r}
-
+final.data1<- readRDS("data/output/full_ma_data.rds")
+```
+```{r}
+final.data1 %>% 
+  group_by(year,county)%>% 
+  summarize(count = n())%>%
+  ggplot(aes( x = year, y  = count, group = county))+
+  geom_line()+
+  labs( title = 'Number of enrollees per county', x = 'Year', y = 'Number of enrollees')+
+  theme_minimal()
 ```
 
 #Premium Data
 I was unable to figure out how to display the graphs from r script in the r markdown
+
+```
