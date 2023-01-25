@@ -1,0 +1,79 @@
+---
+title: 'Homework 1 - Research in Health Economics'
+author: "Ammarah Ahmed"
+date: ""
+output: pdf_document 
+    
+---
+```{r setup, include=FALSE}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, stringr, readxl, data.table, gdata, readr, 
+               scales, kableExtra)
+```
+
+```{r, include=FALSE}
+load("Hw1_workspace.Rdata")
+```
+
+
+# Enrollment Data
+
+# Question 1
+```{r}
+full.ma.data<- readRDS("data/output/full_ma_data.rds")
+```
+There are 'r format(total_obs, big.mark="")' observations in the dataset. 
+
+# Question 2 
+There are 26 different plans in the dataset.
+
+# Question 3
+I was unable to display the table as the code wouldn't run
+```{r}
+plan.type.year1<- full.ma.data %>% group_by(plan_type, year) %>% count() %>% 
+  arrange(year, -n) %>% filter(plan_type!="NA")
+```
+
+```{r}
+options(knitr.kable.NA = 0)
+knitr::kable(plan.type.year1, 
+             col.names=c("Plan Type","2007", "2008", "2009",  "2010","2011","2012","2013","2014","2015"),
+             format.args = list(big.mark=","), caption = "Plan Count by Year")
+```
+
+
+
+```{r}
+pe.year1<- pivot_wider(plan.type.year1, names_from = "year", values_from = "n", names_prefix = "Count_")
+```
+# Question 4
+
+
+```{r}
+full.ma.data2<- full.ma.data %>% 
+  filter(snp == 'No' & eghp == 'No' & !(planid %in% 800:899))
+```
+```{r}
+full.ma.data2 %>% 
+  group_by(year, plan_type)%>% 
+  summarize(n_under_plan_type = n())%>% 
+  spread(year, n_under_plan_type)
+```
+
+```{r}
+final.data1<- readRDS("data/output/full_ma_data.rds")
+```
+```{r}
+final.data1 %>% 
+  group_by(year,county)%>% 
+  summarize(count = n())%>%
+  ggplot(aes( x = year, y  = count, group = county))+
+  geom_line()+
+  labs( title = 'Number of enrollees per county', x = 'Year', y = 'Number of enrollees')+
+  theme_minimal()
+```
+
+#Premium Data
+I was unable to figure out how to display the graphs from r script in the r markdown
+
+```
