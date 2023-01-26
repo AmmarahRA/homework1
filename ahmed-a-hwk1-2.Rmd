@@ -16,7 +16,7 @@ pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, stringr, readxl, data.table
 ```
 
 # Question 1
-```{r}
+```{r, include=FALSE}
 full.ma.data<- readRDS("data/output/full_ma_data.rds")
 ```
 ```{r, include=FALSE}
