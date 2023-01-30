@@ -7,8 +7,12 @@ output: pdf_document
 ---
 ```{r setup, include=FALSE}
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, stringr, readxl, data.table, gdata, readr, 
-               scales, kableExtra)
+pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, stringr, readxl, data.table, gdata, readr,scales, kableExtra, lemon, imputeTS)
+```
+```{r, warning = FALSE, echo = FALSE, message = FALSE}
+knit_print.data.frame <- lemon_print
+
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.width = 16/2, fig.height = 9/2, tidy.opts=list(width.cutoff=60), tidy=TRUE)
 ```
 
 # Question 1
@@ -43,7 +47,8 @@ pe.year1<- pivot_wider(plan.type.year1, names_from = "year", values_from = "n", 
 ```{r}
 options(knitr.kable.NA = 0)
 knitr::kable(pe.year1, 
-             col.names=c("Plan Type","2007", "2008", "2009",  "2010","2011","2012","2013","2014","2015"),
+             col.names=c("Plan Type","2007", "2008", "2009",  "2010","2011","2012","2013"
+                         ,"2014","2015"),
              format.args = list(big.mark=","), caption = "Plan Count by Year")
 ```
 
@@ -64,7 +69,8 @@ pe.year2<- pivot_wider(plan.type.year2, names_from = "year", values_from = "n", 
 ```{r}
 options(knitr.kable.NA = 0)
 knitr::kable(pe.year2, 
-             col.names=c("Plan Type","2007", "2008", "2009",  "2010","2011","2012","2013","2014","2015"),
+             col.names=c("Plan Type","2007", "2008", "2009",  "2010","2011","2012","2013"
+                         ,"2014","2015"),
              format.args = list(big.mark=","), caption = "Plan Count by Year")
 ```
 
@@ -97,6 +103,7 @@ fig.avg.enrollment
 ```{r, include=FALSE}
 final.data<- readRDS("data/output/final_ma_data.rds")
 ````
+
 ```{r, include=FALSE}
 fig.avg.premium<- final.data %>% group_by(year) %>% 
   summarise(prem = mean(!is.na(premium))) %>%
@@ -105,6 +112,7 @@ fig.avg.premium<- final.data %>% group_by(year) %>%
   labs(x = "Year", y="Average Premium", title = "Average Premium over Time") + 
   scale_y_continuous(labels = comma) + theme_bw()
 ```
+
 ```{r}
 fig.avg.premium
 ```
